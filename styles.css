@@ -7,7 +7,8 @@
 }
 
 body {
-    background: linear-gradient(90deg, #7F00FF 0%, #E100FF 100%);
+    background-image: url('./assets/ceu.jpeg');
+    background-size: cover;
 }
 
 #botao-adicionar{
@@ -95,4 +96,8 @@ body {
 }
 
 
+.done{
+    background-color: #649306;
+    text-decoration: line-through;
+}
 
