@@ -6,38 +6,57 @@ let arrayDeTarefas = []
 
 function addTask() { 
     if( input.value.trim() !== ''){ // verifica se o input esta vazio 
-        arrayDeTarefas.push(input.value) // se não estiver vazio é adicionado ao array de tarefas 
+        arrayDeTarefas.push({
+            tarefa: input.value,
+            concluida: false  
+        })
+
         input.value = '';
         renderTasks();
     }
 }
 
 function renderTasks() { 
-    tarefas.innerHTML = ''; // limpa a lista antes de renderizar novamente 
+    let listItem = ''
 
-    arrayDeTarefas.forEach((tarefa, index) => {
+    arrayDeTarefas.forEach((item, index) => {
         
-        const listItem = document.createElement("li");
-        listItem.classList.add("list-group-item"); // adiciona a classe "list-group-item" ao elemento <li>
+        listItem = listItem + `
 
-        listItem.innerHTML = `
-                <p>${tarefa}</p>
-                <button class="apagar" data-index="${index}"> X </button>
+            <li class="list-group-item ${item.concluida && "done"}">
+                <button class="concluido" style="background-color: green" onclick="concluirTasks(${index})"> ✓ </button>
+                <p>${item.tarefa}</p>
+                <button class="apagar" onclick="deletar(${index})"> X </button>
+            </li>
+
         `;
-        tarefas.appendChild(listItem);
     });
 
+    tarefas.innerHTML = listItem
+
+    localStorage.setItem('lista', JSON.stringify(arrayDeTarefas))
+
+}   
+
+function concluirTasks(index){
+    arrayDeTarefas[index].concluida = !arrayDeTarefas[index].concluida
+    renderTasks();
 }
 
-function deletar(event){
-    const index = parseInt(event.target.getAttribute('data-index')); // Aqui, você está obtendo o valor do atributo data-index do elemento que foi clicado. Como o valor do atributo é uma string, você usa parseInt para convertê-lo em um número inteiro e armazená-lo na variável index.
+function deletar(index){
     arrayDeTarefas.splice(index, 1); // Esta linha remove a tarefa da matriz.  O método splice é usado para remover um elemento de uma matriz com base em seu índice
     renderTasks();
 }
 
-button.addEventListener('click', addTask);
-tarefas.addEventListener('click', (event) => {
-    if(event.target.classList.contains('apagar')) {
-        deletar(event)
+function recarregarTarefas(){
+    const tasksLocalStorage = localStorage.getItem('lista')
+
+    if (tasksLocalStorage) {
+        arrayDeTarefas = JSON.parse(tasksLocalStorage)
     }
-});
+
+    renderTasks()
+}
+
+recarregarTarefas()
+button.addEventListener('click', addTask);
